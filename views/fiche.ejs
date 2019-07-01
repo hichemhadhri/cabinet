@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <!-- bootstrap css -->
+
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<style type="text/css" >
+ body{
+   background-color: #DDD;
+ }
+ .well {
+  background-color:#CCC;
+  padding: 20px;
+}
+</style>
+    <title></title>
+  </head>
+  <body>
+    <header>
+    <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <ul class="nav navbar-nav">
+              <li> <a href="#">Accueil</a> </li>
+              <li class="active"> <a href="#">nouveau patient </a> </li>
+
+            </ul>
+            <form class="navbar-form navbar-right inline-form" action="/search/" method="post">
+              <div class="form-group">
+                <input type="search" class="input-sm form-control" placeholder="Recherche" name="enom" id="enom" >
+                <button type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-eye-open"></span> Chercher</button>
+              </div>
+            </form>
+          </div>
+        </nav>
+</header>
+    <h1><%= patient[0].nom %></h1>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-5 ">
+    <form action="/update/<%= patient[0].nom.replace(/\s/g, ''); %>" method="post" class="well">
+      <div class="form-group">
+      <label>nom:  </label>
+      <input type="text" id="nom" name="nom" value="<%= patient[0].nom %>" class="form-control" autofocus />
+      <br/>
+      <br/>
+      <label>prenom:  </label>
+      <input type="text" id="prenom" name="prenom" value="" class="form-control" autofocus />
+      <br/>
+      <br/>
+      <label>age:</label>
+      <input type="text" id="age" name="age" class="form-control" value="<%= patient[0].age %>" autofocus />
+      <br/>
+      <br/>
+      <label>adresse:</label>
+      <input type="text" id="adresse" name="adresse"  class="form-control" value="<%= patient[0].adresse %>" autofocus />
+      <br/>
+      <br/>
+      <label>telephone:</label>
+      <input type="text" id="telephone" name="telephone" class="form-control" value="<%= patient[0].telephone %>" autofocus />
+      <br/>
+      <br/>
+      <label>notes :</label>
+      <textarea type="text" id="notes"  name="notes" autofocus class="form-control" style=" width: 480; height: 270px; " ></textarea>
+      <button type="submit" class="btn btn-primary btn-sm" ><span class="glyphicon glyphicon-plus"></span> ajouter consultation</button>
+    </div>
+    </form>
+  </div>
+  <div class="col-lg-5 col-offset-2">
+    <ul>
+    <% patient.forEach(function(pat,index){ %>
+      <li><a href="#" id="<%= index %>"><%= pat.date %></a></li>
+   <% }); %>
+    </ul>
+
+
+</div>
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+   <script type="text/javascript">
+       var socket = io();
+      var as = document.getElementsByTagName('a');
+      var p = document.createElement('p');
+      var txt = document.createTextNode('');
+      Array.from(as).forEach(function (a) {
+        a.addEventListener("click",function(){
+          socket.emit('bouton',a.innerHTML);
+          socket.on('consultation',function(result){
+            txt.nodeValue = result.notes;
+             p.appendChild(txt);
+             a.parentNode.appendChild(p);
+
+          });
+        });
+        txt.nodeValue= '';
+      });
+
+
+
+ </script>
+</html>
